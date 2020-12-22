@@ -26,8 +26,6 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.admin (
     id_admin integer NOT NULL,
-    email character varying(50),
-    password character varying(50),
     id_responsable integer
 );
 
@@ -53,11 +51,7 @@ ALTER TABLE public.domaine OWNER TO postgres;
 
 CREATE TABLE public.notation (
     id_notation integer NOT NULL,
-    not1 character varying(50),
-    not2 double precision,
-    not3 double precision,
-    not4 double precision,
-    not5 double precision
+    notx character varying(50)
 );
 
 
@@ -73,8 +67,8 @@ CREATE TABLE public.question (
     introduction character varying(50),
     description character varying(50),
     formule character varying(50),
-    tagdomaine character varying(50),
-    tagnomredacteur character varying(50)
+    id_domaine integer,
+    id_notation integer
 );
 
 
@@ -86,9 +80,8 @@ ALTER TABLE public.question OWNER TO postgres;
 
 CREATE TABLE public.questionneur (
     id_questionneur integer NOT NULL,
-    email character varying(50),
-    password character varying(50),
-    id_user integer
+    id_user integer,
+    id_question integer
 );
 
 
@@ -103,7 +96,8 @@ CREATE TABLE public.repondeur (
     domaine character varying(50),
     niveaudomaine character varying(50),
     nomredacteur character varying(50),
-    id_user integer
+    id_user integer,
+    id_reponse integer
 );
 
 
@@ -116,7 +110,8 @@ ALTER TABLE public.repondeur OWNER TO postgres;
 CREATE TABLE public.reponse (
     id_reponse integer NOT NULL,
     reponsel character varying(50),
-    notation character varying(50)
+    notation character varying(50),
+    id_question integer
 );
 
 
@@ -128,8 +123,6 @@ ALTER TABLE public.reponse OWNER TO postgres;
 
 CREATE TABLE public.responsable (
     id_responsable integer NOT NULL,
-    email character varying(50),
-    password character varying(50),
     id_user integer
 );
 
@@ -236,6 +229,30 @@ ALTER TABLE ONLY public.admin
 
 
 --
+-- Name: question question_id_domaine_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.question
+    ADD CONSTRAINT question_id_domaine_fkey FOREIGN KEY (id_domaine) REFERENCES public.domaine(id_domaine);
+
+
+--
+-- Name: question question_id_notation_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.question
+    ADD CONSTRAINT question_id_notation_fkey FOREIGN KEY (id_notation) REFERENCES public.notation(id_notation);
+
+
+--
+-- Name: questionneur questionneur_id_question_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.questionneur
+    ADD CONSTRAINT questionneur_id_question_fkey FOREIGN KEY (id_question) REFERENCES public.question(id_question);
+
+
+--
 -- Name: questionneur questionneur_id_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -244,11 +261,27 @@ ALTER TABLE ONLY public.questionneur
 
 
 --
+-- Name: repondeur repondeur_id_reponse_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.repondeur
+    ADD CONSTRAINT repondeur_id_reponse_fkey FOREIGN KEY (id_reponse) REFERENCES public.reponse(id_reponse);
+
+
+--
 -- Name: repondeur repondeur_id_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.repondeur
     ADD CONSTRAINT repondeur_id_user_fkey FOREIGN KEY (id_user) REFERENCES public.utilisateur(id_user);
+
+
+--
+-- Name: reponse reponse_id_question_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reponse
+    ADD CONSTRAINT reponse_id_question_fkey FOREIGN KEY (id_question) REFERENCES public.reponse(id_reponse);
 
 
 --
